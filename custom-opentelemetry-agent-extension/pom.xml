@@ -17,11 +17,6 @@
     <description>OpenTelemetry Java Agent Extension - uses only the custom-api</description>
 
     <dependencies>
-        <!-- Only depends on the API, not the implementation -->
-        <dependency>
-            <groupId>com.example.otel</groupId>
-            <artifactId>custom-api</artifactId>
-        </dependency>
 
         <!-- OpenTelemetry Agent Extension API -->
         <dependency>
