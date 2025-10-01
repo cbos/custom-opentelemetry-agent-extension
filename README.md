@@ -31,6 +31,8 @@ mvn clean package
 
 java -javaagent:.otel/opentelemetry-javaagent.jar \
      -Dotel.javaagent.extensions=custom-opentelemetry-agent-extension/target/custom-opentelemetry-agent-extension-1.0-SNAPSHOT.jar \
+     -Dotel.javaagent.configuration-file=opentelemetry-javaagent.properties \
+     -Dotel.service.name=CustomOtelAgentExtensionDemo \
      -jar custom-implementation/target/custom-implementation.jar
       
 ```

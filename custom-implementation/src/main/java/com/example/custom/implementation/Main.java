@@ -2,7 +2,7 @@ package com.example.custom.implementation;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         System.out.println("Custom Implementation Application Started");
 
         // Create instances of the implementations
@@ -22,5 +22,8 @@ public class Main {
         System.out.println("Processor transformed: " + transformed);
 
         System.out.println("Application Finished");
+
+        System.out.println("Sleep to push metrics");
+        Thread.sleep(20_000);
     }
 }
