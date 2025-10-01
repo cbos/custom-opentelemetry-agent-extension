@@ -30,10 +30,10 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- OpenTelemetry API -->
+        <!-- OpenTelemetry SDK Extension Autoconfigure SPI -->
         <dependency>
             <groupId>io.opentelemetry</groupId>
-            <artifactId>opentelemetry-api</artifactId>
+            <artifactId>opentelemetry-sdk-extension-autoconfigure-spi</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -42,6 +42,50 @@
             <groupId>io.opentelemetry.instrumentation</groupId>
             <artifactId>opentelemetry-instrumentation-api</artifactId>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- OpenTelemetry Instrumentation API Incubator -->
+        <dependency>
+            <groupId>io.opentelemetry.instrumentation</groupId>
+            <artifactId>opentelemetry-instrumentation-api-incubator</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- AutoService for SPI registration -->
+        <dependency>
+            <groupId>com.google.auto.service</groupId>
+            <artifactId>auto-service</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.auto.service</groupId>
+            <artifactId>auto-service-annotations</artifactId>
+            <version>${autoservice.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JUnit 5 -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -58,9 +102,30 @@
                         </goals>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+
+            <!-- Surefire for tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <io.opentelemetry.smoketest.agentPath>
+                            ${project.build.directory}/agents/opentelemetry-javaagent.jar
+                        </io.opentelemetry.smoketest.agentPath>
+                        <io.opentelemetry.smoketest.extendedAgentPath>
+                            ${project.build.directory}/opentelemetry-javaagent-extended.jar
+                        </io.opentelemetry.smoketest.extendedAgentPath>
+                        <io.opentelemetry.smoketest.extensionPath>
+                            ${project.build.directory}/${project.artifactId}-${project.version}.jar
+                        </io.opentelemetry.smoketest.extensionPath>
+                    </systemPropertyVariables>
+                </configuration>
             </plugin>
         </plugins>
     </build>
