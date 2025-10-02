@@ -1,12 +1,17 @@
 package com.example.custom.instrumentation.processor;
 
-import io.opentelemetry.instrumentation.api.internal.Timer;
+import io.opentelemetry.api.trace.SpanKind;
+import io.opentelemetry.context.Context;
+import io.opentelemetry.context.Scope;
+import io.opentelemetry.instrumentation.api.incubator.semconv.util.ClassAndMethod;
 import io.opentelemetry.javaagent.extension.instrumentation.TypeInstrumentation;
 import io.opentelemetry.javaagent.extension.instrumentation.TypeTransformer;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.matcher.ElementMatcher;
 
+import static com.example.custom.instrumentation.processor.ProcessorSingleton.instrumenter;
+import static io.opentelemetry.javaagent.bootstrap.Java8BytecodeBridge.currentContext;
 import static io.opentelemetry.javaagent.extension.matcher.AgentElementMatchers.implementsInterface;
 import static net.bytebuddy.matcher.ElementMatchers.*;
 
@@ -31,19 +36,38 @@ public class ProcessorInstrumentation implements TypeInstrumentation {
     public static class TransformAdvice {
 
         @Advice.OnMethodEnter()
-        public static Timer onEnter() {
-            System.out.println("Entering instrumentation");
-            return Timer.start();
-        }
+        public static void onEnter(
+                @Advice.Origin("#t") Class<?> declaringClass,
+                @Advice.Origin("#m") String methodName,
+                @Advice.Local("otelMethod") ClassMethodAndKind classAndMethod,
+                @Advice.Local("otelContext") Context context,
+                @Advice.Local("otelScope") Scope scope
+        ) {
+            Context parentContext = currentContext();
+            classAndMethod =
+                    ClassMethodAndKind.create(ClassAndMethod.create(declaringClass, methodName), SpanKind.SERVER);
 
+            if (!instrumenter().shouldStart(parentContext, classAndMethod)) {
+                return;
+            }
+
+            context = instrumenter().start(parentContext, classAndMethod);
+            scope = context.makeCurrent();
+        }
 
         @Advice.OnMethodExit(onThrowable = Throwable.class, suppress = Throwable.class)
         public static void onExit(
-                @Advice.Enter Timer timer,
+                @Advice.Local("otelMethod") ClassMethodAndKind classAndMethod,
+                @Advice.Local("otelContext") Context context,
+                @Advice.Local("otelScope") Scope scope,
                 @Advice.Return String message,
                 @Advice.Thrown Throwable throwable) {
 
-            System.out.println("Leaving instrumentation");
+            if (scope == null) {
+                return;
+            }
+            scope.close();
+            instrumenter().end(context, classAndMethod, message, throwable);
         }
     }
 }

@@ -9,12 +9,12 @@ public class DefaultCustomService implements CustomService {
     
     @Override
     public String process(String data) {
-        System.out.println("Processing data: " + data);
+        Util.randomSleep(50, 150);
         return "Processed: " + data;
     }
     
     @Override
     public void execute(String operation) {
-        System.out.println("Executing operation: " + operation);
+        Util.randomSleep(100, 200);
     }
 }

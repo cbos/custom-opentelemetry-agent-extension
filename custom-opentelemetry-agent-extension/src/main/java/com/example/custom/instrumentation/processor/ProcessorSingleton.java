@@ -1,0 +1,30 @@
+package com.example.custom.instrumentation.processor;
+
+import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.instrumentation.api.incubator.semconv.code.CodeAttributesExtractor;
+import io.opentelemetry.instrumentation.api.incubator.semconv.code.CodeSpanNameExtractor;
+import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
+
+public class ProcessorSingleton {
+
+    private static final String INSTRUMENTATION_NAME = "com.example.custom-1.0";
+
+    private static final Instrumenter<ClassMethodAndKind, String> INSTRUMENTER;
+
+    static {
+        ProcessorCodeAttributesGetter codeAttributesGetter = new ProcessorCodeAttributesGetter();
+
+        INSTRUMENTER =
+                Instrumenter.<ClassMethodAndKind, String>builder(
+                                GlobalOpenTelemetry.get(),
+                                INSTRUMENTATION_NAME,
+                                CodeSpanNameExtractor.create(codeAttributesGetter))
+                        .addAttributesExtractor(CodeAttributesExtractor.create(codeAttributesGetter))
+                        .addOperationMetrics(ProcessorImplementationMetrics.get())
+                        .buildInstrumenter(ClassMethodAndKind::getSpanKind);
+    }
+
+    public static Instrumenter<ClassMethodAndKind, String> instrumenter() {
+        return INSTRUMENTER;
+    }
+}

@@ -9,8 +9,7 @@ public class DefaultCustomProcessor implements CustomProcessor {
     
     @Override
     public String transform(String input) {
-        System.out.println("Transforming input: " + input);
-
+        Util.randomSleep(25, 500);
         return input.toUpperCase();
     }
 }
