@@ -41,8 +41,7 @@ public class Main {
                         try {
                             processor.transform(input);
                         } catch (Exception e) {
-                            System.err.println("Error in thread " + threadNumber + ": " + e.getMessage());
-                            e.printStackTrace();
+                            // Do nothing
                         }
                     }
 
