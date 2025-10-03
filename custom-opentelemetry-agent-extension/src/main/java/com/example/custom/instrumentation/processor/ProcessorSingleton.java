@@ -19,7 +19,7 @@ public class ProcessorSingleton {
                                 GlobalOpenTelemetry.get(),
                                 INSTRUMENTATION_NAME,
                                 CodeSpanNameExtractor.create(codeAttributesGetter))
-                        .addAttributesExtractor(CodeAttributesExtractor.create(codeAttributesGetter))
+                        .addAttributesExtractor(ProcessorAttributeExtractor.create(codeAttributesGetter))
                         .addOperationMetrics(ProcessorImplementationMetrics.get())
                         .buildInstrumenter(ClassMethodAndKind::getSpanKind);
     }

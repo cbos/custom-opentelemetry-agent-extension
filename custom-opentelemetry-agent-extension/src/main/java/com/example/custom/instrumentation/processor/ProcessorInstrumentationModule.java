@@ -26,6 +26,7 @@ public final class ProcessorInstrumentationModule extends InstrumentationModule 
         return Arrays.asList(
                 "com.example.custom.instrumentation.processor.ClassMethodAndKind",
                 "com.example.custom.instrumentation.processor.ProcessorSingleton",
+                "com.example.custom.instrumentation.processor.ProcessorAttributeExtractor",
                 "com.example.custom.instrumentation.processor.ProcessorImplementationMetrics",
                 "com.example.custom.instrumentation.processor.ProcessorImplementationMetrics$State",
                 "com.example.custom.instrumentation.processor.AutoValue_ProcessorImplementationMetrics_State",

@@ -13,10 +13,10 @@ public class Main {
         int numberOfThreads = 5; // You can change this value to create desired number of threads
 
         int iterations = 100;
-        
+
         // Create a fixed thread pool
         ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
-        
+
         // Submit tasks to thread pool
         for (int i = 0; i < numberOfThreads; i++) {
             final int threadNumber = i + 1;
@@ -38,7 +38,12 @@ public class Main {
 
                         // Demonstrate the processor
                         String input = "hello world from thread " + threadNumber;
-                        processor.transform(input);
+                        try {
+                            processor.transform(input);
+                        } catch (Exception e) {
+                            System.err.println("Error in thread " + threadNumber + ": " + e.getMessage());
+                            e.printStackTrace();
+                        }
                     }
 
 
